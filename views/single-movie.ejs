@@ -6,18 +6,18 @@
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 text-center">
             <h1 class="single-movie-title">
-
+            <%= movieData.title %>
             </h1>
 
             <h3 class="single-movie-title">
-
+            <%= movieData.tagline %>
             </h3>
 
 
-            <img src="" />
+            <a href="<%= movieData.homepage %>"><img src="<%= locals.imageBaseUrl + movieData.poster_path %>" /></a>
 
             <p class="overview-header">Movie Synopsis: <span class="single-movie-overview">
-
+                    <%= movieData.overview %>
 				</span></p>
         </div>
     </div>
@@ -39,7 +39,17 @@
                 <h4 class="modal-title" id="myModalLabel">Movie Information</h4>
             </div>
             <div class="modal-body">
-
+                <p><a href="https://www.imdb.com/title/<%= movieData.imdb_id%>" target="_blank">IMDB link</a></p>
+                <p>Movie Budget: <%= movieData.budget %></p>
+                <p>Movie Revenue: <%= movieData.revenue %></p>
+                <p>Movie Data: <%= movieData.release_date %></p>
+                <p>Production Companies:
+                    <ul>
+                        <% movieData.production_companies.forEach( comp => { %>
+                        <li><%= comp.name %></li>
+                        <% }) %>
+                    </ul>
+                </p>
 
             </div>
             <div class="modal-footer">
