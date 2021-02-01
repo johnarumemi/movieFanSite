@@ -64,4 +64,28 @@ router.get('/movie/:id', (req, res, next)=>{
     })
 })
 
+router.post('/search', (req, res, next) => {
+    const userSearchTerm = encodeURI(req.body.movieSearch);
+    const cat = req.body.cat;
+    const movieUrl = `${apiBaseUrl}/search/${cat}?api_key=${apiKey}&query=${userSearchTerm}`
+
+    axios.get(movieUrl).then(response => {
+
+        let parsedData = response.data;
+
+        if (cat === 'person'){
+            parsedData.results = parsedData.results.flatMap(actor => {
+                return actor.known_for
+            })
+        }
+
+        res.render('index', {
+            parsedData: parsedData.results
+        })
+
+    }).catch( error => {
+        res.send(error.message)
+    })
+})
+
 module.exports = router;
