@@ -10,7 +10,29 @@ var app = express();
 
 // Add helmet
 const helmet = require('helmet');
-app.use(helmet());
+app.use(helmet({
+    // options for CSP
+    contentSecurityPolicy: {
+      directives: {
+        // less specific directives use the defaultSrc origins
+        defaultSrc: [
+          "'self'",
+          "https://fonts.googleapis.com",
+          "https://fonts.gstatic.com",
+          "https://maxcdn.bootstrapcdn.com"
+        ],
+        scriptSrc: [
+          "'self'",
+          "https://ajax.googleapis.com",
+          "https://maxcdn.bootstrapcdn.com",
+        ],
+        imgSrc: [
+            "'self'",
+          "http://image.tmdb.org"
+        ]
+      }
+  }
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
