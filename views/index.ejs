@@ -18,9 +18,11 @@
     <div class="col-sm-12">
       <%# we have access to locals.parsedData array%>
       <% locals.parsedData.forEach((movie) => { %>
+        <% if( movie.poster_path){ %>
         <div class="col-md-3 col-sm-4 poster">
             <a href="/movie/<%= movie.id %>"><img src="<%= locals.imageBaseUrl + movie.poster_path %>" /></a>
         </div>
+        <% } %>
       <% }) %>
     </div>
   </div>
