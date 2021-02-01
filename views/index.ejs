@@ -13,11 +13,15 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-12">
-      <h1></h1>
+      <h1>Now Playing</h1>
     </div>
     <div class="col-sm-12">
-
-
+      <%# we have access to locals.parsedData array%>
+      <% locals.parsedData.forEach((movie) => { %>
+        <div class="col-md-3 col-sm-4 poster">
+            <a href="/movie/<%= movie.id %>"><img src="<%= locals.imageBaseUrl + movie.poster_path %>" /></a>
+        </div>
+      <% }) %>
     </div>
   </div>
 </div>
