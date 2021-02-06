@@ -1,5 +1,6 @@
 var express = require('express');
 const axios = require('axios');
+const passport = require('passport');
 
 var router = express.Router();
 const apiKey = process.env.APIKEY;
@@ -18,30 +19,47 @@ router.use((req, res, next) => {
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  axios({
-    method: 'GET',
-    url: nowPlayingUrl
-  }).then( response => {
-      // response object has following properties
-      // 1. status : http status code
-      // 2. statusText: http status message
-      // 3. headers: response headers sent back by server
-      // 4. config: original request configuration
-      // 5. request: XMLHttpRequest object (when running in a browser
+    console.log(`User info: ${req.user}`);
 
-      res.render('index', {
-          parsedData: response.data.results
-      });
-  }).catch( error => {
+    axios({
+        method: 'GET',
+        url: nowPlayingUrl
+    }).then( response => {
+        // response object has following properties
+        // 1. status : http status code
+        // 2. statusText: http status message
+        // 3. data:   essentially the body of the response
+        // 4. headers: response headers sent back by server
+        // 5. config: original request configuration
+        // 6. request: XMLHttpRequest object (when running in a browser)
+
+        res.render('index', {
+            parsedData: response.data.results
+        });
+
+    }).catch( error => {
     // error object has following properties
     // 1. message : error message text
     // 2. response : response object received
     // 3. request : request object
     // 4. config : original request configuration
-    console.log(error)
-  })
+        console.log(error)
+    })
 
 });
+
+
+// authenticate via github strategy and redirect to registered callback of github app
+router.get('/login', passport.authenticate('github')) // redirects to github
+
+router.get('/auth', passport.authenticate('github', {  // redirects after authentication
+    successRedirect: '/',
+    failureRedirect: '/loginFailed'
+}));
+
+router.get('/favorites', (req, res, next)=>{
+    res.json(req.user.displayName);
+})
 
 router.get('/movie/:id', (req, res, next)=>{
     const movieId = req.params.id;
