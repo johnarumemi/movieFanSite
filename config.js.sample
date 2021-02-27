@@ -1,0 +1,5 @@
+module.exports = {
+        clientID: "*************",
+        clientSecret: "**********************",
+        callbackURL:  "protocol://host:PORT/auth"
+}

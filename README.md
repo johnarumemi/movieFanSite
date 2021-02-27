@@ -25,10 +25,27 @@ __Branches__
 
 ## Environment Variables
 
+a `.env` file is required with the following keys.
 + __APIKEY__: API key from the movie database.
 + __PORT__: port for server to listen on, default is 3000.
-+ __SESSION_SECRET__: secret for `session` from `express-session`. Acts as salt.
++ __SESSION_SECRET__: secret for `session` from `express-session`. Acts as salt. Set Manually
+
+see `.env.sample` for an example
+
+## Other Configuration
+
+a `config.js` file in main directory is also required, this should hold info from TMDB app 
+with clientID, clientSecret and callbackURL
+```javascript
+module.exports = {
+        clientID: "*************",
+        clientSecret: "**********************",
+        callbackURL:  "protocol://host:PORT/auth"
+}
+```
+
+see `.config.js.sample` for an example
 
 ## Sources
 
-TMDB API Docs: https://developers.themoviedb.org/3/getting-started/introduction
+TMDb API Docs: https://developers.themoviedb.org/3/getting-started/introduction
