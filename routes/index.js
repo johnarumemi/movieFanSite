@@ -19,7 +19,7 @@ router.use((req, res, next) => {
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-    console.log(`User info: ${req.user}`);
+    console.log(`USER INFO: `, req.user);
 
     axios({
         method: 'GET',
@@ -58,7 +58,11 @@ router.get('/auth', passport.authenticate('github', {  // redirects after authen
 }));
 
 router.get('/favorites', (req, res, next)=>{
-    res.json(req.user.displayName);
+    if (req.user){
+        res.json(req.user.name);
+    } else {
+        res.send('no user data available')
+    }
 })
 
 router.get('/movie/:id', (req, res, next)=>{

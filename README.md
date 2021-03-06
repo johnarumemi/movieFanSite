@@ -28,13 +28,21 @@ __Branches__
 a `.env` file is required with the following keys.
 + __APIKEY__: API key from the movie database.
 + __PORT__: port for server to listen on, default is 3000.
-+ __SESSION_SECRET__: secret for `session` from `express-session`. Acts as salt. Set Manually
++ __SESSION_SECRET__: secret for `session` from `express-session`. Acts as salt. Set Manually 
+  
+Database environment variables
++ __DB_HOST__ : Host name
++ __DB_USER__ : Database Role/User name
++ __DB_PORT__ : Port for database
++ __DB_PASSWORD__ : password for User
++ __DB_DATABASE__ : name of database to access
++ __DB_CLIENT__ : the dialect of the database, i.e. postgres, mysql, etc.
 
 see `.env.sample` for an example
 
 ## Other Configuration
 
-a `config.js` file in main directory is also required, this should hold info from TMDB app 
+a `configPassport.js` file in main directory is also required, this should hold info from TMDB app 
 with clientID, clientSecret and callbackURL
 ```javascript
 module.exports = {
@@ -44,7 +52,7 @@ module.exports = {
 }
 ```
 
-see `.config.js.sample` for an example
+see `.configPassport.js.sample` for an example
 
 ## Sources
 

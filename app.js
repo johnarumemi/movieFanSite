@@ -1,11 +1,24 @@
+var path = require('path');
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
+const session = require('express-session'); // session is a function
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const db = require('./db');
+const { User } = db;
+const { Op } = require('sequelize');
+
+// initialize sequelize with session store
+var SequelizeStore = require("connect-session-sequelize")(session.Store)
+
+// Create Session Store link to database
+var sessionStore = new SequelizeStore({ db: db.sequelize})
+
+// create/sync database table
+sessionStore.sync()
+
 // ======== PASSPORT FILES========================
-const session = require('express-session'); // session is a function
 const passport = require('passport');
 const GitHubStrategy = require('passport-github').Strategy;
 // Strategy takes 2 args:
@@ -44,23 +57,51 @@ app.use(helmet({
 
 // ============PASSPORT CONFIG=============
 // configure session before initializing passport
+
+app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  store: sessionStore,
+  name: "magic_session",
+  secret: process.env.SESSION_SECRET, // secret key is just salt to make session id harder to crack
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // set to false when using http connection
+  cookie: {
+      path: '/',
+      httpOnly: true,
+      secure: false, // set to false when using http connection
+      maxAge: 5000  // max age in milliseconds
+  }
 }))
+
 app.use(passport.initialize());
 app.use(passport.session()); // requires express-session
-const passportConfig = require('./config')
+
+// Get the configuration object
+const { configPassport } = require('./config')
 // passport middleware - Strategy needs a verify callback
-passport.use(new GitHubStrategy(passportConfig,
-    (accessToken, refreshToken, profile, cb) => {
+passport.use(new GitHubStrategy(configPassport,
+    async (accessToken, refreshToken, profile, cb) => {
       // verify callback, called upon successful authentication
       // The verify callback must call cb providing a user to complete authentication process
-      console.log(profile);
 
-      return cb(null, profile)  // return cb(error, user), have no error object here though
+
+        const {id: github_id, displayName: name} = profile;
+
+        // Find or create returns [foundObject, boolean indicating of record was just created]
+        let [user, created] = await User.findOrCreate({
+            logging: true,
+            where: {"github_id": {[Op.eq]: github_id}},
+            defaults: {
+                name: name,
+                github_id: github_id,
+            },
+            attributes: ['name', ['github_id', 'githubId'], 'id']
+        })
+        console.log(Object.keys(user.dataValues))
+        // clean up user object
+        user = {id: user.id, name: user.name, githubId: user.getDataValue('githubId')}
+
+        return cb(null, user)  // return cb(error, user), have no error object here though
 
     })
 )
@@ -81,7 +122,6 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var indexRouter = require('./routes/index');
