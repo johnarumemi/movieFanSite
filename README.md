@@ -38,6 +38,10 @@ Database environment variables
 + __DB_DATABASE__ : name of database to access
 + __DB_CLIENT__ : the dialect of the database, i.e. postgres, mysql, etc.
 
++ __GITHUB_CLIENTID__=TMDb Client ID
++ __GITHUB_SECRET__=TMDb Secret
++ __GITHUB_CB__=http://HOST:PORT/ENDPOINT
+
 see `.env.sample` for an example
 
 ## Other Configuration

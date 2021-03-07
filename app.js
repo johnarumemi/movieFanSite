@@ -73,7 +73,13 @@ app.use(session({
   }
 }))
 
-app.use(passport.initialize());
+app.use(passport.initialize())
+
+/*
+passport.session() acts as a middleware to alter the req object
+ and change the encrypted user value that is currently the
+  session sig (from the client cookie) into a user object.
+*/
 app.use(passport.session()); // requires express-session
 
 // Get the configuration object
@@ -107,11 +113,13 @@ passport.use(new GitHubStrategy(configPassport,
 )
 
 passport.serializeUser( (user, cb) => {
-  cb(null, user); // store user
+    // Serialization is when the user gets encrypted from the database and sends it back to the browser as a cookie
+    cb(null, user); // store user
 })
 
 passport.deserializeUser((user, cb) => {
-  cb(null, user); // restore user to req.user
+    // Deserialization is when the user cookie gets decrypted from the browser to the database.
+    cb(null, user); // restore user to req.user
 })
 
 // ========================================
